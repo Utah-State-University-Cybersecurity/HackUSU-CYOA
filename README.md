@@ -1,0 +1,2 @@
+# hackUSU
+HackUSU repo 
