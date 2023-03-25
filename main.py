@@ -1,5 +1,6 @@
 import tkinter as tk
 import random
+import openai
 
 # how many steps in the story
 # track items on screen with buttons 
@@ -10,10 +11,41 @@ STEPS = 10
 step = -1 # start at -1 for menu screen
 buttons = []
 
+# AI----------------------------------
+openai.api_key = "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"
+
+chatlog = []
+def query(prompt):
+    message = prompt
+    chatlog.append({"role": "user", "content": message})
+    response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages = chatlog)
+    reply = response["choices"][0]["message"]["content"]
+    chatlog.append({"role": "assistant", "content": reply})
+    return reply
+
+def parse(response):
+    # cover beginning and end edge cases    
+    if (step == -1 or step == STEPS):
+        response = response.replace("\n\n", "\n")
+        return [response, "", ""]
+    
+    op1index = response.find("Option 1")
+    op2index = response.find("Option 2")
+
+    # cut string
+    summary = response[:op1index]
+    option1 = response[op1index+9:op2index].replace("\n", "")
+    option2 = response[op2index+9:].replace("\n", "")
+
+    return [summary, option1, option2]
+
+# Tkinter-----------------------------
 # define updates
 def create_query(option):
     global step
     global STEPS
+    if (step == -1):
+        return "Make up 5 random video game characters."
     # create character
     if (step == 0):
         return f"Begin writing a story involving hero {option}. Give the reader two options to choose from to continue the story."
@@ -46,12 +78,9 @@ def update(option):
         if (option == "garbage"):
             story.config(text="Welcome to ChatGPT Choose Your Own Adventure.\nSelect your adventure length below!\nSelect a Length!")
             return
-        if (option == "Short"):    STEPS = 10
+        elif (option == "Short"):  STEPS = 10
         elif (option == "Medium"): STEPS = 15
         elif (option == "Long"):   STEPS = 25
-        # step += 1
-        # gameloop()
-        # return
 
     # check to make sure character was selected
     if (step == 0):
@@ -63,23 +92,16 @@ def update(option):
             return
     
     # create query
-    query = create_query(option)
-
-    results = "" # GPT Query here
-    # TODO: parse results
-
-    storytext = "story"
-    op1text = "option1"
-    op2text = "option2"
-    # update window
-    story.config(text=storytext)
-    # not at beginning or end
-    if (step != 0 and step != STEPS):
-        buttons[2].config(text=op1text)
-        buttons[3].config(text=op2text)
+    results = parse(query(create_query(option)))
     # update num of steps
     step += 1
     gameloop()
+    # update window
+    story.config(text=results[0])
+    # not at beginning or end
+    if (step != -1 and step != STEPS):
+        buttons[2].config(text=results[1])
+        buttons[3].config(text=results[2])
 
 def gameloop():
     global STEPS
@@ -94,7 +116,7 @@ def gameloop():
         selected_value.set("garbage")
         ranges = ["Short", "Medium", "Long"]
         frame = tk.Frame(root)
-        frame.grid(row=2, column=0, columnspan=len(ranges))
+        frame.grid(row=2, column=0, columnspan=len(ranges), sticky=tk.W)
         for i in range(len(ranges)):
             button = tk.Radiobutton(frame, text=ranges[i], variable=selected_value, value=ranges[i])
             button.pack(side='left')
@@ -111,7 +133,7 @@ def gameloop():
         selected_value.set(0)
         # create radio buttons for character selection
         frame = tk.Frame(root)
-        frame.grid(row=2, column=0, columnspan=5)
+        frame.grid(row=2, column=0, columnspan=5, sticky=tk.W)
         for i in range(1, 6):
             button = tk.Radiobutton(frame, text=str(i), variable=selected_value, value=str(i))
             button.pack(side='left')
@@ -123,27 +145,37 @@ def gameloop():
 
     # end of game
     elif (step == STEPS):
-        # TODO: button to save comic strip
+        # create frame
+        frame1 = tk.Frame(root)
+        frame1.grid(row=2, column=0, columnspan=2, sticky="w")
         # button to save comic strip
-        save = tk.Button(root, text="Save Comic", command=save_comic)
-        save.grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
+        # TODO: implement
+        # save = tk.Button(frame1, text="Save Comic", command=save_comic)
+        # save.grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
         # button to close window
-        close = tk.Button(root, text="Close Window", command=close_window)
+        close = tk.Button(frame1, text="Close Window", command=close_window)
         close.grid(row=2, column=1, sticky=tk.W, padx=5, pady=5)
 
     # regular turn
     else:
+        # create frames
+        frame1 = tk.Frame(root)
+        frame1.grid(row=2, column=0, columnspan=2, sticky="w")
+        frame2 = tk.Frame(root)
+        frame2.grid(row=3, column=0, columnspan=2, sticky="w")
         # option 1
-        option1 = tk.Button(root, text="Option 1", command=lambda: update(1))
-        op1label = tk.Label(root, text="op1text")
+        option1 = tk.Button(frame1, text="Option 1", command=lambda: update(1))
+        op1label = tk.Label(frame1, text="op1text")
         # option 2
-        option2 = tk.Button(root, text="Option 2", command=lambda: update(2))
-        op2label = tk.Label(root, text="op2text")
+        option2 = tk.Button(frame2, text="Option 2", command=lambda: update(2))
+        op2label = tk.Label(frame2, text="op2text")
         # place items on window
-        option1.grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
-        op1label.grid(row=2, column=1, sticky=tk.W, padx=5, pady=5)
-        option2.grid(row=3, column=0, sticky=tk.W, padx=5, pady=5)
-        op2label.grid(row=3, column=1, sticky=tk.W, padx=5, pady=5)
+        option1.pack(side='left', anchor="nw")
+        op1label.config(wraplength=500, justify='left')
+        op1label.pack(side='left', anchor="nw")
+        option2.pack(side='left', anchor="nw")
+        op2label.config(wraplength=500, justify='left')
+        op2label.pack(side='left', anchor="nw")
 
         # add buttons to what's on screen
         buttons.append(option1)
@@ -171,7 +203,8 @@ root.title("HUSU-CYOA")
 # generate story image and text
 # TODO: Story name
 # TODO: Story image
-story = tk.Label(root, text="Hello World!")
+story = tk.Label(root, text="Hello World!", anchor="w")
+story.config(wraplength=500, justify='left')
 story.grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
 
 # init call
