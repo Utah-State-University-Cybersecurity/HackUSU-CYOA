@@ -43,25 +43,29 @@ def update(option):
     global buttons
     # check for menu screen
     if (step == -1):
-        if (option == ""):
+        if (option == "garbage"):
             story.config(text="Welcome to ChatGPT Choose Your Own Adventure.\nSelect your adventure length below!\nSelect a Length!")
             return
-        if (option == "Short"):
-            STEPS = 10
-        elif (option == "Medium"):
-            STEPS = 15
-        elif (option == "Long"):
-            STEPS = 25
-        print(str(STEPS))
-        step += 1
-        gameloop()
-        return
+        if (option == "Short"):    STEPS = 10
+        elif (option == "Medium"): STEPS = 15
+        elif (option == "Long"):   STEPS = 25
+        # step += 1
+        # gameloop()
+        # return
 
+    # check to make sure character was selected
+    if (step == 0):
+        if (option == 0):
+            t = story.cget('text')
+            if (not "\nSelect a Character!" in t):
+                t = story.cget('text') + "\nSelect a Character!"
+            story.config(text=t)
+            return
+    
     # create query
     query = create_query(option)
 
-    # GPT Query here
-    results = ""
+    results = "" # GPT Query here
     # TODO: parse results
 
     storytext = "story"
@@ -87,11 +91,13 @@ def gameloop():
         story.config(text="Welcome to ChatGPT Choose Your Own Adventure.\nSelect your adventure length below!")
         # select length
         selected_value = tk.StringVar()
-        selected_value.set("")
+        selected_value.set("garbage")
         ranges = ["Short", "Medium", "Long"]
+        frame = tk.Frame(root)
+        frame.grid(row=2, column=0, columnspan=len(ranges))
         for i in range(len(ranges)):
-            button = tk.Radiobutton(root, text=ranges[i], variable=selected_value, value=ranges[i])
-            button.grid(row=2, column=i)
+            button = tk.Radiobutton(frame, text=ranges[i], variable=selected_value, value=ranges[i])
+            button.pack(side='left')
             buttons.append(button)
         # button to confirm length
         selectLengthButton = tk.Button(root, text="Select Length", command=lambda: update(selected_value.get()))
@@ -104,9 +110,11 @@ def gameloop():
         selected_value = tk.IntVar()
         selected_value.set(0)
         # create radio buttons for character selection
+        frame = tk.Frame(root)
+        frame.grid(row=2, column=0, columnspan=5)
         for i in range(1, 6):
-            button = tk.Radiobutton(root, text=str(i), variable=selected_value, value=str(i))
-            button.grid(row=2, column=i-1)
+            button = tk.Radiobutton(frame, text=str(i), variable=selected_value, value=str(i))
+            button.pack(side='left')
             buttons.append(button)
         # button for confirming character selection
         selectCharButton = tk.Button(root, text="Select Character", command=lambda: update(selected_value.get()))
