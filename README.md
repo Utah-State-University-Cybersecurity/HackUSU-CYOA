@@ -1,5 +1,5 @@
 # Overview
-The goal of this project was to create a Choose Your Own Adventure style game powered by ChatGPT-3.5  
+The goal of this project was to create a Choose Your Own Adventure style game powered by OpenAI's ChatGPT-3.5-turbo  
 
 We did this by calling the API for GPT with a very specific prompt, parsing the results, and displaying it all in a tkinter window.  
 
@@ -50,5 +50,5 @@ These features may get added in the future
 |Name | Github | Linkedin | 
 |---|---|---|
 | Carter Watson  | [Github](https://github.com/cartwatson) | [LinkedIn](https://www.linkedin.com/in/cartwatson)  |
-| Chandler M     | [Github](https://github.com/spacemagicmango) | [LinkedIn]()  |
-| Joseph Johnson | [Github]() | [LinkedIn](https://www.linkedin.com/in/joseph-johnson-52bb011b0/) |  
+| Chandler McClellan     | [Github](https://github.com/spacemagicmango) | [LinkedIn](https://www.linkedin.com/in/chandler-mcclellan-765a85261/)  |
+| Joseph Johnson | [Github](https://github.com/jpjohnson-31337) | [LinkedIn](https://www.linkedin.com/in/joseph-johnson-52bb011b0/) |  
