@@ -6,6 +6,7 @@ import openai # pip install openai
 # how many steps in the story
 STEPS = 10
 step = -1 # start at -1 for menu screen
+fileSaved = False
 op1label_name = ""
 op2label_name = ""
 # track items on screen with frames 
@@ -27,6 +28,8 @@ def parse(response):
     # cover beginning and end edge cases    
     if (step == -1 or step == STEPS):
         response = response.replace("\n\n", "\n")
+        if (step == -1):
+            response = "Select your Character!\n" + response
         return [response, "", ""]
     
     op1index = response.find("Option 1: ")
@@ -200,33 +203,41 @@ def remove_buttons():
     frames.clear()
 
 def save_comic():
+    global fileSaved
     try:
-        # handle saving the file
-        fileName = "adventure_" + str(time.time()) + ".txt"
-        file = open(fileName, "w")
-        for i in range(len(chatlog)):
-            if chatlog[i]["role"] == "assistant":
-                file.write(chatlog[i]["content"])
-        file.close()
-        # give user update on save status
-        t = story.cget('text')
-        if (not "\nStory Saved!" in t):
-            t = story.cget('text') + "\nStory Saved!\nAdventure saved as: " + fileName
-        story.config(text=t)
+        if not fileSaved:
+            # handle saving the file
+            fileName = "adventure_" + str(time.time()) + ".txt"
+            file = open(fileName, "w")
+            for i in range(len(chatlog)):
+                if chatlog[i]["role"] == "assistant":
+                    file.write(chatlog[i]["content"])
+            file.close()
+            # give user update on save status
+            t = story.cget('text')
+            if (not "\nStory Saved!" in t):
+                t = story.cget('text') + "\nStory Saved!\nAdventure saved as: " + fileName
+            story.config(text=t)
+            fileSaved = True
+        else:
+            t = story.cget('text') + "\nFile already saved!"
+            story.config(text=t)
     except:
         t = story.cget('text') + "\nError saving file! Try again!"
         story.config(text=t)
 
 def reset_game():
     global step
+    global fileSaved
     remove_buttons()
     step = -1
     chatlog.clear()
+    fileSaved = False
     gameloop()
 
 # create window
 root = tk.Tk()
-root.title("HUSU-CYOA")
+root.title("HUSU-Choose Your Own Adventure")
 
 # generate story image and text
 # TODO: Story name
