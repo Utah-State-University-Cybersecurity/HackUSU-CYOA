@@ -4,15 +4,14 @@ import openai
 
 # how many steps in the story
 # track items on screen with buttons 
-global STEPS
-global step
-global buttons
 STEPS = 10
 step = -1 # start at -1 for menu screen
-buttons = []
+op1label_name = ""
+op2label_name = ""
+frames = []
 
 # AI----------------------------------
-openai.api_key = "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"
+openai.api_key = "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"
 
 chatlog = []
 def query(prompt):
@@ -29,21 +28,20 @@ def parse(response):
         response = response.replace("\n\n", "\n")
         return [response, "", ""]
     
-    op1index = response.find("Option 1")
+    op1index = response.find("Option 1: ")
     op2index = response.find("Option 2")
 
     # cut string
     summary = response[:op1index]
-    option1 = response[op1index+9:op2index].replace("\n", "")
-    option2 = response[op2index+9:].replace("\n", "")
+    option1 = response[op1index+10:op2index].replace("\n", "")
+    option2 = response[op2index+10:].replace("\n", "")
 
     return [summary, option1, option2]
 
-# Tkinter-----------------------------
-# define updates
 def create_query(option):
     global step
     global STEPS
+
     if (step == -1):
         return "Make up 5 random video game characters."
     # create character
@@ -69,10 +67,12 @@ def create_query(option):
     
     return query
 
+# Tkinter-----------------------------
 def update(option):
-    global STEPS
     global step
-    global buttons
+    global STEPS
+    global op1label_name
+    global op2label_name
     # check for menu screen
     if (step == -1):
         if (option == "garbage"):
@@ -93,20 +93,26 @@ def update(option):
     
     # create query
     results = parse(query(create_query(option)))
+    print(results)
     # update num of steps
     step += 1
     gameloop()
     # update window
     story.config(text=results[0])
-    # not at beginning or end
+    # not at beginning or end, update option text
     if (step != -1 and step != STEPS):
-        buttons[2].config(text=results[1])
-        buttons[3].config(text=results[2])
+        for frame in frames:
+            for widget in frame.winfo_children():
+                if widget.winfo_name() == "op1":
+                    widget.config(text=results[1])
+                if widget.winfo_name() == "op2":
+                    widget.config(text=results[2])
 
 def gameloop():
-    global STEPS
     global step
-    global buttons
+    global STEPS
+    global op1label_name
+    global op2label_name
     remove_buttons()
     # menu screen
     if (step == -1):
@@ -117,80 +123,76 @@ def gameloop():
         ranges = ["Short", "Medium", "Long"]
         frame = tk.Frame(root)
         frame.grid(row=2, column=0, columnspan=len(ranges), sticky=tk.W)
+        frames.append(frame)
         for i in range(len(ranges)):
             button = tk.Radiobutton(frame, text=ranges[i], variable=selected_value, value=ranges[i])
             button.pack(side='left')
-            buttons.append(button)
         # button to confirm length
-        selectLengthButton = tk.Button(root, text="Select Length", command=lambda: update(selected_value.get()))
-        selectLengthButton.grid(row=3, column=0, sticky=tk.W, padx=5, pady=5)
-        buttons.append(selectLengthButton)
+        frame2 = tk.Frame(root)
+        frame2.grid(row=3, column=0, columnspan=1, sticky=tk.W, padx=5, pady=5)
+        frames.append(frame2)
+        selectLengthButton = tk.Button(frame2, text="Select Length", command=lambda: update(selected_value.get()))
+        selectLengthButton.pack(side='left')
 
     # picking character
     elif (step == 0):
         # setup var for selecting character
-        selected_value = tk.IntVar()
+        selected_value = tk.StringVar()
         selected_value.set(0)
         # create radio buttons for character selection
         frame = tk.Frame(root)
-        frame.grid(row=2, column=0, columnspan=5, sticky=tk.W)
+        frame.grid(row=2, column=0, columnspan=3, sticky="w", padx=5, pady=5)
         for i in range(1, 6):
-            button = tk.Radiobutton(frame, text=str(i), variable=selected_value, value=str(i))
+            button = tk.Radiobutton(frame, text=str(i), variable=selected_value, value=i)
             button.pack(side='left')
-            buttons.append(button)
         # button for confirming character selection
-        selectCharButton = tk.Button(root, text="Select Character", command=lambda: update(selected_value.get()))
-        selectCharButton.grid(row=3, column=0, sticky=tk.W, padx=5, pady=5)
-        buttons.append(selectCharButton)
+        frame2 = tk.Frame(root)
+        frame2.grid(row=3, column=0, columnspan=1, sticky=tk.W, padx=5, pady=5)
+        frames.append(frame2)
+        selectCharButton = tk.Button(frame2, text="Select Character", command=lambda: update(selected_value.get()))
+        selectCharButton.pack(side='left')
 
     # end of game
     elif (step == STEPS):
         # create frame
         frame1 = tk.Frame(root)
-        frame1.grid(row=2, column=0, columnspan=2, sticky="w")
-        # button to save comic strip
+        frame1.grid(row=2, column=0, columnspan=2, sticky="w", padx=5, pady=5)
         # TODO: implement
+        # button to save comic strip
         # save = tk.Button(frame1, text="Save Comic", command=save_comic)
         # save.grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
         # button to close window
         close = tk.Button(frame1, text="Close Window", command=close_window)
-        close.grid(row=2, column=1, sticky=tk.W, padx=5, pady=5)
+        close.pack()
 
     # regular turn
     else:
         # create frames
-        frame1 = tk.Frame(root)
-        frame1.grid(row=2, column=0, columnspan=2, sticky="w")
-        frame2 = tk.Frame(root)
-        frame2.grid(row=3, column=0, columnspan=2, sticky="w")
+        op1frame = tk.Frame(root)
+        op1frame.grid(row=2, column=0, columnspan=2, sticky="w", padx=5, pady=5)
+        frames.append(op1frame)
         # option 1
-        option1 = tk.Button(frame1, text="Option 1", command=lambda: update(1))
-        op1label = tk.Label(frame1, text="op1text")
+        option1 = tk.Button(op1frame, text="Option 1", command=lambda: update(1))
+        op1label = tk.Label(op1frame, text="op1text", wraplength=500, justify='left', name="op1")
         # option 2
-        option2 = tk.Button(frame2, text="Option 2", command=lambda: update(2))
-        op2label = tk.Label(frame2, text="op2text")
+        op2frame = tk.Frame(root)
+        op2frame.grid(row=3, column=0, columnspan=2, sticky="w", padx=5, pady=5)
+        frames.append(op2frame)
+        option2 = tk.Button(op2frame, text="Option 2", command=lambda: update(2))
+        op2label = tk.Label(op2frame, text="op2text", wraplength=500, justify='left', name="op2")
         # place items on window
         option1.pack(side='left', anchor="nw")
-        op1label.config(wraplength=500, justify='left')
         op1label.pack(side='left', anchor="nw")
         option2.pack(side='left', anchor="nw")
-        op2label.config(wraplength=500, justify='left')
         op2label.pack(side='left', anchor="nw")
-
-        # add buttons to what's on screen
-        buttons.append(option1)
-        buttons.append(option2)
-        buttons.append(op1label)
-        buttons.append(op2label)
 
 def close_window():
     root.destroy()
 
 def remove_buttons():
-    for button in buttons:
-        button.grid_forget()
-        button.destroy()
-    buttons.clear()
+    for frame in frames:
+        frame.destroy()
+    frames.clear()
 
 def save_comic():
     # TODO: implement
