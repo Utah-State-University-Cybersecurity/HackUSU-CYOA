@@ -1,6 +1,7 @@
 import tkinter as tk
 import random
-import openai
+import time
+import openai # pip install openai
 
 # how many steps in the story
 # track items on screen with buttons 
@@ -11,7 +12,7 @@ op2label_name = ""
 frames = []
 
 # AI----------------------------------
-openai.api_key = ""
+openai.api_key = "API_KEY HERE"
 
 chatlog = []
 def query(prompt):
@@ -200,17 +201,28 @@ def remove_buttons():
     frames.clear()
 
 def save_comic():
-    # TODO: implement
-    t = story.cget('text')
-    if (not "\nStory Saved!" in t):
-        t = story.cget('text') + "\nStory Saved!"
-    story.config(text=t)
-    pass
+    try:
+        # handle saving the file
+        fileName = "adventure_" + str(time.time()) + ".txt"
+        file = open(fileName, "w")
+        for i in range(len(chatlog)):
+            if chatlog[i]["role"] == "assistant":
+                file.write(chatlog[i]["content"])
+        file.close()
+        # give user update on save status
+        t = story.cget('text')
+        if (not "\nStory Saved!" in t):
+            t = story.cget('text') + "\nStory Saved!\nAdventure saved as: " + fileName
+        story.config(text=t)
+    except:
+        t = story.cget('text') + "\nError saving file! Try again!"
+        story.config(text=t)
 
 def reset_game():
     global step
     remove_buttons()
     step = -1
+    chatlog.clear()
     gameloop()
 
 # create window
