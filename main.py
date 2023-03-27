@@ -4,15 +4,15 @@ import time
 import openai # pip install openai
 
 # how many steps in the story
-# track items on screen with buttons 
 STEPS = 10
-step = 10 # start at -1 for menu screen
+step = -1 # start at -1 for menu screen
 op1label_name = ""
 op2label_name = ""
+# track items on screen with frames 
 frames = []
 
 # AI----------------------------------
-openai.api_key = "API_KEY HERE"
+openai.api_key = "YOUR_API_KEY_HERE"
 
 chatlog = []
 def query(prompt):
@@ -94,7 +94,6 @@ def update(option):
     
     # create query
     results = parse(query(create_query(option)))
-    # print(results) # DEBUG
     # update num of steps
     step += 1
     gameloop()
