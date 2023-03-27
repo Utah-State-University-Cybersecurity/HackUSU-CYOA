@@ -235,20 +235,26 @@ def reset_game():
     fileSaved = False
     gameloop()
 
-# create window
-root = tk.Tk()
-root.title("HUSU-Choose Your Own Adventure")
+def main():
+    global root
+    global story
+    # create window
+    root = tk.Tk()
+    root.title("HUSU-Choose Your Own Adventure")
 
-# generate story image and text
-# TODO: Story name
-# TODO: Story image
-story = tk.Label(root, text="Hello World!", anchor="w")
-story.config(wraplength=500, justify='left')
-story.grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
+    # generate story image and text
+    # TODO: Story name
+    # TODO: Story image
+    story = tk.Label(root, text="Hello World!", anchor="w")
+    story.config(wraplength=500, justify='left')
+    story.grid(row=1, column=0, sticky=tk.W, padx=5, pady=5)
 
-# init call
-gameloop()
+    # init call
+    gameloop()
 
-# window loop
-root.geometry("600x400")
-root.mainloop()
+    # window loop
+    root.geometry("600x400")
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
