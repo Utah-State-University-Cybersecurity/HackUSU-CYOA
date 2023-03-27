@@ -5,13 +5,13 @@ import openai
 # how many steps in the story
 # track items on screen with buttons 
 STEPS = 10
-step = -1 # start at -1 for menu screen
+step = 10 # start at -1 for menu screen
 op1label_name = ""
 op2label_name = ""
 frames = []
 
 # AI----------------------------------
-openai.api_key = "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"
+openai.api_key = ""
 
 chatlog = []
 def query(prompt):
@@ -93,7 +93,7 @@ def update(option):
     
     # create query
     results = parse(query(create_query(option)))
-    print(results)
+    # print(results) # DEBUG
     # update num of steps
     step += 1
     gameloop()
@@ -157,13 +157,18 @@ def gameloop():
         # create frame
         frame1 = tk.Frame(root)
         frame1.grid(row=2, column=0, columnspan=2, sticky="w", padx=5, pady=5)
-        # TODO: implement
+        frames.append(frame1)
+        frame2 = tk.Frame(root)
+        frame2.grid(row=3, column=0, columnspan=2, sticky="w", padx=5, pady=5)
+        frames.append(frame2)
         # button to save comic strip
-        # save = tk.Button(frame1, text="Save Comic", command=save_comic)
-        # save.grid(row=2, column=0, sticky=tk.W, padx=5, pady=5)
+        save = tk.Button(frame1, text="Save Adventure", command=save_comic, padx=5)
+        save.pack(side='left')
         # button to close window
-        close = tk.Button(frame1, text="Close Window", command=close_window)
-        close.pack()
+        reset = tk.Button(frame1, text="Play Again", command=reset_game, padx=5)
+        reset.pack(side='left')
+        close = tk.Button(frame2, text="Close Window", command=close_window, padx=5)
+        close.pack(side='left')
 
     # regular turn
     else:
@@ -196,7 +201,17 @@ def remove_buttons():
 
 def save_comic():
     # TODO: implement
+    t = story.cget('text')
+    if (not "\nStory Saved!" in t):
+        t = story.cget('text') + "\nStory Saved!"
+    story.config(text=t)
     pass
+
+def reset_game():
+    global step
+    remove_buttons()
+    step = -1
+    gameloop()
 
 # create window
 root = tk.Tk()
