@@ -5,6 +5,11 @@ We did this by calling the API for GPT with a very specific prompt, parsing the 
 
 **We're honored to have won the beginner award for AI and Machine Learning at [HackUSU](https://www.hackusu.com/) 2023.**
 
+# Video Demos
+| Hackathon | Current |
+|---|---|
+| [![Hackathon Demo](http://img.youtube.com/vi/Z_0t5PnRWzw/0.jpg)](http://www.youtube.com/watch?v=Z_0t5PnRWzw "GPT Powered Choose-Your-Own-Adventure -- HackUSU 2023") | Video coming soon! |
+
 # Usage
 ## Prerequisites
 In order to run this program you'll need 
@@ -31,24 +36,16 @@ In order to run this program you'll need
 Features we wanted to include but weren't able to due to the time constraint  
 These features may get added in the future  
 - [ ] generate dalle images for each scene
-- [ ] option save story with images and text
+- [ ] save story with images and text
+- [x] option save story text to file
 - [ ] ChatGPT api call async so loading symbol can be displayed to user instead of the app going unresponsive
 - [ ] ability to go back and replay scenarios (select different option)
-- [ ] "Play Again" button
+- [x] "Play Again" button
 - [ ] Refactor code to better conform to python coding standards 
-
-# Video Demos
-> Coming soon!
-<!--
-## Hackathon
-> Note, the program appears to be unresponsive at times due to loading times from ChatGPT
-
-## Current
--->
 
 # Contributors
 |Name | Github | Linkedin | 
 |---|---|---|
-| Carter Watson  | [Github](https://github.com/cartwatson) | [LinkedIn](https://www.linkedin.com/in/cartwatson)  |
-| Chandler McClellan     | [Github](https://github.com/spacemagicmango) | [LinkedIn](https://www.linkedin.com/in/chandler-mcclellan-765a85261/)  |
-| Joseph Johnson | [Github](https://github.com/jpjohnson-31337) | [LinkedIn](https://www.linkedin.com/in/joseph-johnson-52bb011b0/) |  
+| Carter Watson      | [Github](https://github.com/cartwatson)      | [LinkedIn](https://www.linkedin.com/in/cartwatson)                    |
+| Chandler McClellan | [Github](https://github.com/spacemagicmango) | [LinkedIn](https://www.linkedin.com/in/chandler-mcclellan-765a85261/) |
+| Joseph Johnson     | [Github](https://github.com/jpjohnson-31337) | [LinkedIn](https://www.linkedin.com/in/joseph-johnson-52bb011b0/)     |  
