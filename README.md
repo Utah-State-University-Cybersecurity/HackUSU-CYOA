@@ -47,5 +47,5 @@ These features may get added in the future
 |Name | Github | Linkedin | 
 |---|---|---|
 | Carter Watson      | [Github](https://github.com/cartwatson)      | [LinkedIn](https://www.linkedin.com/in/cartwatson)                    |
-| Chandler McClellan | [Github](https://github.com/spacemagicmango) | [LinkedIn](https://www.linkedin.com/in/chandler-mcclellan-765a85261/) |
+| Chandler McClellan | [Github](https://github.com/Ctr1cCtr1v) | [LinkedIn](https://www.linkedin.com/in/chandler-mcclellan-765a85261/) |
 | Joseph Johnson     | [Github](https://github.com/jpjohnson-31337) | [LinkedIn](https://www.linkedin.com/in/joseph-johnson-52bb011b0/)     |  
